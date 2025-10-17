@@ -1,0 +1,6 @@
+﻿services:
+  rapidcrud:
+    image: rapidcrud
+    build:
+      context: .
+      dockerfile: rapidCRUD/Dockerfile
