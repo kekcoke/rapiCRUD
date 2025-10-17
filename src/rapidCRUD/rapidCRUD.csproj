@@ -29,4 +29,9 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\rapidCRUD.ServiceDefaults\rapidCRUD.ServiceDefaults.csproj" />
+        <ProjectReference Include="..\rapidCRUD.Contracts\rapidCRUD.Contracts.csproj" />
+    </ItemGroup>
+
 </Project>
