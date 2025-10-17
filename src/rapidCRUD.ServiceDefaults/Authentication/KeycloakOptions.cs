@@ -1,0 +1,7 @@
+namespace rapidCRUD.ServiceDefaults.Authentication;
+
+public class KeycloakOptions
+{
+    public string Authority { get; set; } = string.Empty;
+    public string Audience { get; set; } = string.Empty;
+}
