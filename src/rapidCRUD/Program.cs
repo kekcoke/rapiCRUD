@@ -21,37 +21,36 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 // Services
-builder.Services
-    .AddServiceDefaults(builder.Configuration)
-    .AddKeycloakJwtSetup(builder.Configuration)
-    .AddEndpointsApiExplorer()
-    .AddKeycloakJwtSetup(builder.Configuration);
 builder.Services.AddSwaggerGen(c =>
 {
-   c.SwaggerDoc("v1", new() { Title = "Rapid CRUD API", Version = "v1" });
-   c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-   {
-       Description = "JWT Authorization header using Bearer scheme",
-       Name = "Authorization",
-       In = ParameterLocation.Header,
-       Type = SecuritySchemeType.Http,
-       Scheme = "Bearer"   
-   });
-   c.AddSecurityRequirement(new OpenApiSecurityRequirement
-   {
-       {
-              new OpenApiSecurityScheme
-              {
+    c.SwaggerDoc("v1", new() { Title = "Rapid CRUD API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using Bearer scheme",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer"   
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
                 Reference = new OpenApiReference
                 {
-                     Type = ReferenceType.SecurityScheme,
-                     Id = "Bearer"
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 }
-              },
-              Array.Empty<string>()
-       }
-   });
+            },
+            Array.Empty<string>()
+        }
+    });
 });
+builder.Services
+    .AddServiceDefaults(builder.Configuration)
+    .AddEndpointsApiExplorer();
+
 
 builder.Services.AddHttpContextAccessor();
 
