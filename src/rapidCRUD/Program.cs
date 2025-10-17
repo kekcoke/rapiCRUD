@@ -1,3 +1,6 @@
+using Microsoft.OpenApi.Models;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,9 +8,47 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.ApplicationInsights(builder.Configuration["ApplicationInsights:ConnectionString"], TelemetryConverter.Traces)
+    .CreateLogger();
+    
+builder.Host.UseSerilog();
+
+// Services
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+   c.SwaggerDoc("v1", new() { Title = "Rapid CRUD API", Version = "v1" });
+   c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+   {
+       Description = "JWT Authorization header using Bearer scheme",
+       Name = "Authorization",
+       In = ParameterLocation.Header,,
+       Type = SecuritySchemeType.Http,
+       Scheme = "Bearer"   
+   });
+   c.AddSecurityRequirement(new OpenApiSecurityRequirement
+   {
+       {
+              new OpenApiSecurityScheme
+              {
+                Reference = new OpenApiReference
+                {
+                     Type = ReferenceType.SecurityScheme,
+                     Id = "Bearer"
+                }
+              },
+              Array.Empty<string>()
+       }
+   });
+});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -15,30 +56,3 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
-
-app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
