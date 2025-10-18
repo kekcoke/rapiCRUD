@@ -21,6 +21,18 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 // Services
+builder.Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new(1, 0);
+        options.ReportApiVersions = true;
+        options.AssumeDefaultVersionWhenUnspecified = true;
+    })
+    .AddApiExplorer(options =>
+    {
+        options.GroupNameFormat = "'v'VVV";
+        options.SubstituteApiVersionInUrl = true; 
+    });
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "Rapid CRUD API", Version = "v1" });
@@ -55,6 +67,8 @@ builder.Services
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
+
+app.MapControllers();
 
 if (app.Environment.IsDevelopment())
 {
