@@ -8,7 +8,9 @@ public static class ServiceDefaultsExtensions
 {
     public static IServiceCollection AddServiceDefaults(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddKeycloakJwtSetup(configuration);
+        services
+            .AddJwtBearerSetup(configuration)
+            .AddKeycloakJwtSetup(configuration);
         return services;
     }
 }

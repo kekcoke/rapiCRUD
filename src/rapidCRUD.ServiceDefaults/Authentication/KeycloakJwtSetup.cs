@@ -9,16 +9,16 @@ public static class KeycloakJwtSetup
 {
     public static IServiceCollection AddKeycloakJwtSetup(this IServiceCollection services, IConfiguration config)
     {
-        var keyCloakSection = config.GetSection("Keycloak");
-        var authority = keyCloakSection.GetValue<string>("Authority");
-        var audience = keyCloakSection.GetValue<string>("Audience");
-
+        var keyCloakOptions = new KeycloakOptions();
+        config.Bind(nameof(keyCloakOptions), keyCloakOptions);
+        
+        services.AddSingleton(keyCloakOptions);
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                options.Authority = authority;
-                options.Audience = audience;
+                options.Authority = keyCloakOptions.Authority;
+                options.Audience = keyCloakOptions.Audience;
                 options.RequireHttpsMetadata = true;
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
