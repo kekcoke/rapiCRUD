@@ -61,7 +61,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services
     .AddServiceDefaults(builder.Configuration)
-    .AddEndpointsApiExplorer();
+    .AddEndpointsApiExplorer()
+    .AddAuthorization();
 
 
 builder.Services.AddHttpContextAccessor();
@@ -79,3 +80,5 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 //app.UseHttpsRedirection();
+
+public partial class Program { }

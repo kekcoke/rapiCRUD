@@ -32,8 +32,17 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Content Update="appsettings.json" CopyToOutputDirectory="Always" />
+        <Content Update="appsettings.Development.json" CopyToOutputDirectory="Always" Condition="Exists('appsettings.Development.json')" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\rapidCRUD.ServiceDefaults\rapidCRUD.ServiceDefaults.csproj" />
         <ProjectReference Include="..\rapidCRUD.Contracts\rapidCRUD.Contracts.csproj" />
     </ItemGroup>
+    
+    <PropertyGroup>
+        <PreserveCompilationContext>true</PreserveCompilationContext>
+    </PropertyGroup>
 
 </Project>
