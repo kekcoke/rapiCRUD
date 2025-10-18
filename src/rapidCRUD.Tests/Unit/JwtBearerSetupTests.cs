@@ -16,7 +16,7 @@ public class JwtBearerSetupTests
         {
             {"JwtOptions:Issuer", "local-issuer"},
             {"JwtOptions:Audience", "local-audience"},
-            {"JwtOptions:SecretKey", "super-secret-key"},
+            {"JwtOptions:Secret", "super-secret-key"},
             {"KeycloakOptions:Authority", "https://keycloak.local"},
             {"KeycloakOptions:Audience", "keycloak-audience"},
             {"KeycloakOptions:RequireHttpsMetadata", "false"}

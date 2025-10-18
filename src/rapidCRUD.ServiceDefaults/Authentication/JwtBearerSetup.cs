@@ -44,7 +44,7 @@ public static class JwtBearerSetup
                     ValidAudience = jwtOptions.Audience,
                     
                     // Local JWT signing key
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
                     ClockSkew = TimeSpan.Zero // removes 5-minute default clock skew
                 };
                 
