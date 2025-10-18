@@ -13,20 +13,35 @@ public static class JwtTestHelper
         string secretKey,
         int expiryMinutes = 60)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        // If the secret is Base64, decode it; otherwise, use UTF8
+        byte[] keyBytes;
+        try
+        {
+            keyBytes = Convert.FromBase64String(secretKey);
+        }
+        catch (FormatException)
+        {
+            keyBytes = Encoding.UTF8.GetBytes(secretKey);
+        }
+
+        if (keyBytes.Length < 32) // 256 bits
+        {
+            throw new ArgumentException("The secret key must be at least 32 bytes (256 bits) long.");
+        }
+
+        var creds = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,
             claims: new[]
             {
-                new System.Security.Claims.Claim(
-                    System.Security.Claims.ClaimTypes.Name, "TestUser")
+                new Claim(
+                    ClaimTypes.Name, "TestUser")
             },
             expires: DateTime.UtcNow.AddMinutes(expiryMinutes),
             signingCredentials: creds);
         
-        return new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler().WriteToken(token);
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

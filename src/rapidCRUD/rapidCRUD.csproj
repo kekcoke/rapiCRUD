@@ -40,6 +40,10 @@
         <ProjectReference Include="..\rapidCRUD.ServiceDefaults\rapidCRUD.ServiceDefaults.csproj" />
         <ProjectReference Include="..\rapidCRUD.Contracts\rapidCRUD.Contracts.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="rapidCRUD.Tests" />
+    </ItemGroup>
     
     <PropertyGroup>
         <PreserveCompilationContext>true</PreserveCompilationContext>
