@@ -5,16 +5,21 @@ using Microsoft.AspNetCore.Mvc;
 namespace rapidCRUD.Features.Authentication;
 
 [ApiController]
-[ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class ProtectedController : ControllerBase
+public class TestController : ControllerBase
 {
-    [HttpGet("endpoint")]
+    [HttpGet("protected")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize]
-    public IActionResult GetProtectedData()
+    public IActionResult GetProtected()
     {
         var userName = User.Identity?.Name ?? "Authenticated User";
         return Ok(new { message = $"Hello {userName}, your JWT is valid!" });
+    }
+
+    [HttpGet("public")]
+    public IActionResult GetPublic()
+    {
+        return Ok(new { message = "Hello, this is a public endpoint!" });
     }
 }

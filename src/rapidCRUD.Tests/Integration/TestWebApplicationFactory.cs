@@ -14,10 +14,10 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         // either use appsettings or in-memory configuration
         builder.ConfigureAppConfiguration((context, config) =>
         {
+            config.Sources.Clear();
             config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables()
-                .Build();
+                .AddEnvironmentVariables();
         });
 
         builder.ConfigureServices(services =>
