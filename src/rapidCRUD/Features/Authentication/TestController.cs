@@ -2,24 +2,35 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace rapidCRUD.Features.Authentication;
+namespace rapidCRUD.Controllers;
 
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
+[ApiVersion("1.0")]
 public class TestController : ControllerBase
 {
-    [HttpGet("protected")]
-    [ApiExplorerSettings(IgnoreApi = true)]
-    [Authorize]
-    public IActionResult GetProtected()
+    [HttpGet("public")]
+    [AllowAnonymous]
+    public IActionResult Public()
     {
-        var userName = User.Identity?.Name ?? "Authenticated User";
-        return Ok(new { message = $"Hello {userName}, your JWT is valid!" });
+        Console.WriteLine("[TestController] Public endpoint called");
+        return Ok(new { message = "Public endpoint" });
     }
 
-    [HttpGet("public")]
-    public IActionResult GetPublic()
+    [HttpGet("protected")]
+    [Authorize]  // Using default scheme
+    public IActionResult Protected()
     {
-        return Ok(new { message = "Hello, this is a public endpoint!" });
+        Console.WriteLine($"[TestController] Protected endpoint called by: {User.Identity?.Name ?? "Unknown"}");
+        Console.WriteLine($"[TestController] Is Authenticated: {User.Identity?.IsAuthenticated}");
+        Console.WriteLine($"[TestController] Auth Type: {User.Identity?.AuthenticationType}");
+        
+        return Ok(new 
+        { 
+            message = "Protected endpoint", 
+            user = User.Identity?.Name,
+            isAuthenticated = User.Identity?.IsAuthenticated,
+            claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList()
+        });
     }
 }
