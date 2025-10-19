@@ -24,4 +24,8 @@
   <ItemGroup>
     <ProjectReference Include="..\rapidCRUD\rapidCRUD.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json" CopyToOutputDirectory="Always" />
+  </ItemGroup>
 </Project>
