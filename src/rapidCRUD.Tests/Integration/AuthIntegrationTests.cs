@@ -43,7 +43,6 @@ public class AuthIntegrationTests : IClassFixture<TestWebApplicationFactory>
             Console.WriteLine($"Content: {content}");
         }
         
-        
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
