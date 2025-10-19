@@ -28,6 +28,8 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         {
             // use actual service or mock implementations here
         });
+
+        builder.UseSetting("DetailedErrors", "true");
     }
 
 

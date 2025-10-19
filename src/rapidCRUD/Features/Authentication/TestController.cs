@@ -10,7 +10,7 @@ public class TestController : ControllerBase
 {
     [HttpGet("protected")]
     [ApiExplorerSettings(IgnoreApi = true)]
-    [Authorize]
+    [Authorize(Policy = "RequireAuthentication")]
     public IActionResult GetProtected()
     {
         var userName = User.Identity?.Name ?? "Authenticated User";
