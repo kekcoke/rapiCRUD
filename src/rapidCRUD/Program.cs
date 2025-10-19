@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using rapidCRUD.Infrastructure.Database;
 using rapidCRUD.ServiceDefaults.Authentication;
 using rapidCRUD.ServiceDefaults.Configuration;
 using Serilog;
@@ -31,8 +33,38 @@ builder.Services.AddApiVersioning(options =>
     .AddApiExplorer(options =>
     {
         options.GroupNameFormat = "'v'VVV";
-        options.SubstituteApiVersionInUrl = true; 
+        options.SubstituteApiVersionInUrl = true;
     });
+
+// Database Configuration with Connection Pooling
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var dbProvider = builder.Configuration["DatabaseProvider"] ?? "PostgreSQL";
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    switch (dbProvider.ToLower())
+    {
+        case "postgresql":
+            options.UseNpgsql(connectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.EnableRetryOnFailure(maxRetryCount: 3);
+                npgsqlOptions.CommandTimeout(30);
+            });
+            break;
+        case "sqlserver":
+            options.UseSqlServer(connectionString, sqlOptions =>
+            {
+                sqlOptions.EnableRetryOnFailure(maxRetryCount: 3);
+                sqlOptions.CommandTimeout(30);
+            });
+            break;
+        default:
+            throw new InvalidOperationException($"Unsupported database provider: {dbProvider}");
+    }
+    
+    options.EnableSensitiveDataLogging(builder.Environment.IsDevelopment());
+    options.EnableDetailedErrors(builder.Environment.IsDevelopment());
+});
 
 builder.Services
     .AddServiceDefaults(builder.Configuration)
