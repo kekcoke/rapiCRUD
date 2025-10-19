@@ -10,7 +10,6 @@ public static class ServiceDefaultsExtensions
     {
         services
             .AddCombinedJwtKeycloakSetup(configuration);
-            // .AddKeycloakJwtSetup(configuration);
         return services;
     }
 }
