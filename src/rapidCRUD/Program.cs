@@ -34,6 +34,10 @@ builder.Services.AddApiVersioning(options =>
         options.SubstituteApiVersionInUrl = true; 
     });
 
+builder.Services
+    .AddServiceDefaults(builder.Configuration)
+    .AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "Rapid CRUD API", Version = "v1" });
@@ -60,11 +64,6 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-builder.Services
-    .AddServiceDefaults(builder.Configuration)
-    .AddEndpointsApiExplorer()
-    .AddAuthorization();
-
 
 builder.Services.AddHttpContextAccessor();
 
