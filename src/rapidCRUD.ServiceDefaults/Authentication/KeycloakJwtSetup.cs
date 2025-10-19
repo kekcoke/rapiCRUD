@@ -10,7 +10,7 @@ public static class KeycloakJwtSetup
     public static IServiceCollection AddKeycloakJwtSetup(this IServiceCollection services, IConfiguration config)
     {
         var keyCloakOptions = new KeycloakOptions();
-        config.Bind(nameof(keyCloakOptions), keyCloakOptions);
+        config.Bind("Keycloak", keyCloakOptions);
         
         services.AddSingleton(keyCloakOptions);
         services

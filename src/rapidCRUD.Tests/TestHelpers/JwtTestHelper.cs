@@ -32,20 +32,7 @@ public static class JwtTestHelper
         string secret,
         int expiryMinutes = 60)
     {
-        // Try to interpret the key as Base64, otherwise as plain text
-        byte[] keyBytes;
-        try
-        {
-            keyBytes = Convert.FromBase64String(secret);
-        }
-        catch (FormatException)
-        {
-            keyBytes = Encoding.UTF8.GetBytes(secret);
-        }
-
-        if (keyBytes.Length < 32) // 256 bits required
-            throw new ArgumentException("The secret key must be at least 32 bytes (256 bits) long for HS256.", nameof(secret));
-
+        var keyBytes = Convert.FromBase64String(secret);
         var creds = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(

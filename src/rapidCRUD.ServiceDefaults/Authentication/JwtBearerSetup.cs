@@ -12,12 +12,12 @@ public static class JwtBearerSetup
     {
         // Local JWT setup
         var jwtOptions = new JwtOptions();
-        config.Bind(nameof(JwtOptions), jwtOptions);
+        config.Bind("Jwt", jwtOptions);
         services.AddSingleton(jwtOptions);
 
         // Keycloak
         var keycloakOptions = new KeycloakOptions();
-        config.Bind(nameof(keycloakOptions), keycloakOptions);
+        config.Bind("Keycloak", keycloakOptions);
         services.AddSingleton(keycloakOptions);
         
         services.AddAuthentication(options =>

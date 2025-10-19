@@ -14,9 +14,9 @@ public class JwtBearerSetupTests
         // Arrange
         var settings = new Dictionary<string, string>
         {
-            {"JwtOptions:Issuer", "local-issuer"},
-            {"JwtOptions:Audience", "local-audience"},
-            {"JwtOptions:Secret", "super-secret-key"},
+            {"Jwt:Issuer", "local-issuer"},
+            {"Jwt:Audience", "local-audience"},
+            {"Jwt:Secret", "super-secret-key"},
             {"KeycloakOptions:Authority", "https://keycloak.local"},
             {"KeycloakOptions:Audience", "keycloak-audience"},
             {"KeycloakOptions:RequireHttpsMetadata", "false"}
