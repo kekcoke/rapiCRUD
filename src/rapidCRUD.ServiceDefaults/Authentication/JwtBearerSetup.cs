@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Protocols;
 
 namespace rapidCRUD.ServiceDefaults.Authentication;
 
@@ -23,17 +22,13 @@ public static class JwtBearerSetup
         
         services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                // Default to local JWT for testing/development
+                options.DefaultAuthenticateScheme = "LocalJwt";
+                options.DefaultChallengeScheme = "LocalJwt";
             })
-            .AddJwtBearer(options =>
+            // Local JWT Scheme
+            .AddJwtBearer("LocalJwt", options =>
             {
-                options.Events = new JwtBearerEvents()
-                {
-                    OnMessageReceived = context => System.Threading.Tasks.Task.CompletedTask,
-                    OnTokenValidated = context => System.Threading.Tasks.Task.CompletedTask
-                };
-                
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -42,19 +37,37 @@ public static class JwtBearerSetup
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtOptions.Issuer,
                     ValidAudience = jwtOptions.Audience,
-                    
-                    // Local JWT signing key
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
-                    ClockSkew = TimeSpan.Zero // removes 5-minute default clock skew
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Convert.FromBase64String(jwtOptions.Secret)), // Fixed: Use Base64 decoding
+                    ClockSkew = TimeSpan.FromMinutes(5)
                 };
+            })
+            // Keycloak Scheme
+            .AddJwtBearer("Keycloak", options =>
+            {
+                options.Authority = keycloakOptions.Authority;
+                options.Audience = keycloakOptions.Audience;
+                options.RequireHttpsMetadata = keycloakOptions.RequireHttpsMetadata;
                 
-                // Configure Keycloak metadata retrieval for asymmetric signing keys
-                options.ConfigurationManager = new Microsoft.IdentityModel.Protocols.ConfigurationManager<Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration>(
-                    $"{keycloakOptions.Authority}/.well-known/openid-configuration",
-                    new Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfigurationRetriever(),
-                    new HttpDocumentRetriever { RequireHttps = keycloakOptions.RequireHttpsMetadata }
-                );
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidIssuer = keycloakOptions.Authority,
+                    ValidAudience = keycloakOptions.Audience
+                };
             });
+        
+        // Add policy to accept either scheme
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("RequireAuthentication", policy =>
+            {
+                policy.AddAuthenticationSchemes("LocalJwt", "Keycloak");
+                policy.RequireAuthenticatedUser();
+            });
+        });
         
         return services;
     }
