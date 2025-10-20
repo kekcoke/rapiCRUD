@@ -1,7 +1,9 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using rapidCRUD.Features.Items;
 using rapidCRUD.Infrastructure.Database;
+using rapidCRUD.Middleware;
 using rapidCRUD.ServiceDefaults.Authentication;
 using rapidCRUD.ServiceDefaults.Configuration;
 using Serilog;
@@ -164,20 +166,32 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Feature services
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
+
 var app = builder.Build();
+
+// Global Middleware
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.MapControllers();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Rapid CRUD API v1");
+        c.RoutePrefix = "swagger";
+    });
     app.UseDeveloperExceptionPage();
 }
 
+app.UseHttpsRedirection();
+app.UseCors("AllowAll");
+
 app.UseAuthentication();
 app.UseAuthorization();
-//app.UseHttpsRedirection();
 app.Run();
 
 public partial class Program { }
