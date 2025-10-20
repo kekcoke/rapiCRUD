@@ -208,6 +208,28 @@ app.MapHealthChecks("health/live", new HealthCheckOptions()
 // Feature endpoints
 app.MapItemEndpoints();
 
-app.Run();
+// Run db migrations at startup
+if (builder.Configuration.GetValue<bool>("RunMigrationsOnStartup"))
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
+
+Log.Information("Starting rapidCRUD application...");
+
+try
+{
+    await app.RunAsync();
+}
+
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly!");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
 
 public partial class Program { }
