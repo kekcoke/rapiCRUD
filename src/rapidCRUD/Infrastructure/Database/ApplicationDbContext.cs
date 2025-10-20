@@ -1,6 +1,7 @@
 
 
 using Microsoft.EntityFrameworkCore;
+using rapidCRUD.Features.Items;
 
 namespace rapidCRUD.Infrastructure.Database;
 
@@ -17,13 +18,26 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Features.Items.Item>(entity =>
+        modelBuilder.Entity<Item>(entity =>
         {
+            entity.ToTable("Items");
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Description).HasMaxLength(500);
-            entity.Property(e => e.CreatedAt).IsRequired();
-            entity.Property(e => e.UpdatedAt).IsRequired();
+            
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+            
+            entity.Property(e => e.Description)
+                .HasMaxLength(500);
+            
+            entity.Property(e => e.CreatedAt)
+                .IsRequired();
+            
+            entity.Property(e => e.UpdatedAt)
+                .IsRequired();
+
+            entity.HasIndex(e => e.CreatedAt);
+            entity.HasIndex(e => e.Name);
         });
     }
 }
