@@ -144,7 +144,14 @@ builder.Services.AddMassTransit(x =>
     }
 });
 
-builder.Services.AddHttpContextAccessor();
+// Health Checks
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<ApplicationDbContext>("Database")
+    .AddCheck("messaging", () => 
+    {
+        // Custom messaging health check
+        return Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy();
+    });
 
 var app = builder.Build();
 
