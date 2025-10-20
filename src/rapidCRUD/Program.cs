@@ -1,4 +1,5 @@
 using MassTransit;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using rapidCRUD.Features.Items;
@@ -192,6 +193,18 @@ app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Health Checks Endpoints
+app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/ready", new HealthCheckOptions()
+{
+    Predicate = check => check.Tags.Contains("ready")
+});
+app.MapHealthChecks("health/live", new HealthCheckOptions()
+{
+    Predicate = _ => false
+});
+
 app.Run();
 
 public partial class Program { }
