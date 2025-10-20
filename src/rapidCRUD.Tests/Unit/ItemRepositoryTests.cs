@@ -107,6 +107,8 @@ public class ItemRepositoryTests
             await repository.AddAsync(item);
         }
         
-        var result = await repository.GetPagedAsync(2, 3);
+        var result = await repository.GetPagedAsync(1, 10);
+
+        result.Should().HaveCount(10);
     }
 }
