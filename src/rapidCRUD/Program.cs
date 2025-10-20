@@ -153,6 +153,17 @@ builder.Services.AddHealthChecks()
         return Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy();
     });
 
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 app.MapControllers();
