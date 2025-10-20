@@ -139,7 +139,17 @@ public static class JwtBearerSetup
                 };
             });
         
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("AdminOnly", policy =>
+            {
+                policy.RequireClaim("role", "admin");
+            });
+            options.AddPolicy("UserOrAdmin", policy =>
+            {
+                policy.RequireClaim("role", new[] { "user", "admin" });
+            });
+        });
         
         return services;
     }
