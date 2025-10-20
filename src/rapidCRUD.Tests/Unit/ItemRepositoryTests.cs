@@ -38,6 +38,17 @@ public class ItemRepositoryTests
     }
 
     [Fact]
+    public async Task GetByIdAsync_ShouldReturnNull_WhenItemDoesNotExist()
+    {
+        await using var context = GetInMemoryDbContext();
+        var repository = new ItemRepository(context);
+        
+        var result = await repository.GetByIdAsync(Guid.NewGuid());
+        
+        result.Should().BeNull();
+    }
+
+    [Fact]
     public async Task UpdateAsync_ShouldUpdateItemInDatabase()
     {
         await using var context = GetInMemoryDbContext();
