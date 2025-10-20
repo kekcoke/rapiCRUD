@@ -89,4 +89,24 @@ public class ItemRepositoryTests
         
         result.Should().BeNull();
     }
+
+    [Fact]
+    public async Task GetPagedAsync_ShouldReturnCorrectPageSize()
+    {
+        await using var context = GetInMemoryDbContext();
+        var repository = new ItemRepository(context);
+        for (int i = 1; i <= 10; i++)
+        {
+            var item = new Item
+            {
+                Id = Guid.NewGuid(),
+                Name = $"Item {i}",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.Now
+            };
+            await repository.AddAsync(item);
+        }
+        
+        var result = await repository.GetPagedAsync(2, 3);
+    }
 }

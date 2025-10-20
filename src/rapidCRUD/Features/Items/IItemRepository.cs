@@ -6,7 +6,7 @@ namespace rapidCRUD.Features.Items;
 public interface IItemRepository
 {
     Task<Item?> GetByIdAsync(Guid id);
-    Task<List<Item>> GetPagedAsync(int page);
+    Task<List<Item>> GetPagedAsync(int page, int pageSize);
     Task<List<Item>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<int> CountAsync(CancellationToken cancellationToken = default);
     Task AddAsync(Item item);
@@ -30,9 +30,8 @@ public class ItemRepository : IItemRepository
             .FirstOrDefaultAsync(i => i.Id == id);    
     }
 
-    public async Task<List<Item>> GetPagedAsync(int page)
+    public async Task<List<Item>> GetPagedAsync(int page, int pageSize)
     {
-        const int pageSize = 10;
         return await _context.Items
             .AsNoTracking()
             .OrderByDescending(i => i.CreatedAt)
