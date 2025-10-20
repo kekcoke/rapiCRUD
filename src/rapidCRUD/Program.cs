@@ -205,6 +205,9 @@ app.MapHealthChecks("health/live", new HealthCheckOptions()
     Predicate = _ => false
 });
 
+// Feature endpoints
+app.MapItemEndpoints();
+
 app.Run();
 
 public partial class Program { }

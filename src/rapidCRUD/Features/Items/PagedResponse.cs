@@ -6,9 +6,10 @@ public record PagedResponse<T>
     public int TotalCount { get; init; }
     public int PageNumber { get; init; }
     public int PageSize { get; init; }
-
+    public int Page { get; init; }
+    public int TotalPages { get; init; }
+    
     public PagedResponse() { }
-
     public PagedResponse(IEnumerable<T> items, int totalCount, int pageNumber, int pageSize)
     {
         Items = items ?? Enumerable.Empty<T>();
