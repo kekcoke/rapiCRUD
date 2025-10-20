@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using rapidCRUD.Infrastructure.Database;
@@ -66,6 +67,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.EnableDetailedErrors(builder.Environment.IsDevelopment());
 });
 
+
+// Authentication and Authorization and Service Defaults via ServiceCollectionExtensions
 builder.Services
     .AddServiceDefaults(builder.Configuration)
     .AddEndpointsApiExplorer();
@@ -95,6 +98,50 @@ builder.Services.AddSwaggerGen(c =>
             Array.Empty<string>()
         }
     });
+});
+
+// MassTransit Configuration
+var messagingProvider = builder.Configuration["MessagingProvider"] ?? "RabbitMQ";
+
+builder.Services.AddMassTransit(x =>
+{
+    x.SetKebabCaseEndpointNameFormatter();
+
+    // Add consumers
+    switch (messagingProvider.ToLower())
+    {
+        case "azureservicebus":
+            var conn = builder.Configuration["AzureServiceBus:ConnectionString"];
+            if (!string.IsNullOrEmpty(conn))
+            {
+                x.UsingAzureServiceBus((context, cfg) =>
+                {
+                    cfg.Host(conn);
+                    cfg.ConfigureEndpoints(context);
+                });
+            }
+
+            break;
+
+        case "rabbitmq":
+            var host = builder.Configuration["RabbitMQ:Host"];
+            var user = builder.Configuration["RabbitMQ:Username"];
+            var password = builder.Configuration["RabbitMQ:Password"];
+
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(host, "/", h =>
+                {
+                    h.Username(user);
+                    h.Password(password);
+                });
+                cfg.ConfigureEndpoints(context);
+            });
+            break;
+
+        default:
+            throw new InvalidOperationException($"Unsupported messaging provider: {messagingProvider}");
+    }
 });
 
 builder.Services.AddHttpContextAccessor();
