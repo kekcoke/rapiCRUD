@@ -69,4 +69,24 @@ public class ItemRepositoryTests
         result.Should().NotBeNull();
         result!.Name.Should().Be("Updated Item");
     }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldDeleteItemFromDatabase()
+    {
+        await using var context = GetInMemoryDbContext();
+        var repository = new ItemRepository(context);
+        var item = new Item
+        {
+            Id = Guid.NewGuid(),
+            Name = "Item to Delete",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.Now
+        };
+        await repository.AddAsync(item);
+        
+        await repository.DeleteAsync(item);
+        var result = await repository.GetByIdAsync(item.Id);
+        
+        result.Should().BeNull();
+    }
 }
