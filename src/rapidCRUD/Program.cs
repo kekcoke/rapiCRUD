@@ -41,8 +41,8 @@ builder.Services.AddApiVersioning(options =>
     });
 
 // Database Configuration with Connection Pooling
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var dbProvider = builder.Configuration["DatabaseProvider"] ?? "PostgreSQL";
+var dbProvider = builder.Configuration["DatabaseProvider"] ?? "postgres";
+var connectionString = builder.Configuration[$"ConnectionStrings:{dbProvider}"];
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
