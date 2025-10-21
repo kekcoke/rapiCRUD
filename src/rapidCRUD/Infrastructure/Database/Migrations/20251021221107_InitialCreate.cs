@@ -25,7 +25,8 @@ namespace rapidCRUD.Infrastructure.Database.Migrations
                 {
                     table.PrimaryKey("PK_Items", x => x.Id);
                 });
-
+            
+            // Create indexes for performance optimization
             migrationBuilder.CreateIndex(
                 name: "IX_Items_CreatedAt",
                 table: "Items",
@@ -35,6 +36,11 @@ namespace rapidCRUD.Infrastructure.Database.Migrations
                 name: "IX_Items_Name",
                 table: "Items",
                 column: "Name");
+            
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_UpdatedAt",
+                table: "Items",
+                column: "UpdatedAt");
         }
 
         /// <inheritdoc />
