@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using rapidCRUD.Features.Items;
+using rapidCRUD.Features.Users;
 using rapidCRUD.Infrastructure.Database;
 using rapidCRUD.Middleware;
 using rapidCRUD.ServiceDefaults.Authentication;
@@ -169,6 +170,7 @@ builder.Services.AddCors(options =>
 
 // Feature services
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<IUserRepository, UsersRepository>();
 
 var app = builder.Build();
 
