@@ -17,6 +17,6 @@ public class User
     public bool IsDeleted { get; set; } = false;
     public DateTime? DeletedAt { get; set; }
     public DateTime? LastLoginAt { get; set; }
-    public string CountryAbbreviation { get; set; } = string.Empty;
+    public string Country { get; set; } = string.Empty;
     public string FullName => $"{FirstName} {LastName}".Trim();
 }
