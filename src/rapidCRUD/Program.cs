@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using rapidCRUD.Features.Items;
+using rapidCRUD.Features.Users;
 using rapidCRUD.Infrastructure.Database;
 using rapidCRUD.Middleware;
 using rapidCRUD.ServiceDefaults.Authentication;
@@ -41,8 +42,8 @@ builder.Services.AddApiVersioning(options =>
     });
 
 // Database Configuration with Connection Pooling
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var dbProvider = builder.Configuration["DatabaseProvider"] ?? "PostgreSQL";
+var dbProvider = builder.Configuration["DatabaseProvider"] ?? "Postgresql";
+var connectionString = builder.Configuration[$"ConnectionStrings:{dbProvider}"];
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -169,6 +170,7 @@ builder.Services.AddCors(options =>
 
 // Feature services
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<IUserRepository, UsersRepository>();
 
 var app = builder.Build();
 
