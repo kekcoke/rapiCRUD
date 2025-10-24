@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MassTransit;
+using rapidCRUD.Features.Items.Validators;
 
 namespace rapidCRUD.Features.Items;
 
